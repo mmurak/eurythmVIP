@@ -1,0 +1,55 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+.full{
+	--color1: #ffffff;
+	--color2: #e0ffff;
+	position: relative;
+	margin: 10px;
+	width: auto;
+	background-size: 10px 10px;
+	background-repeat: repeat;
+	background-image: conic-gradient(
+		var(--color1) 0deg 90deg,
+		rgba(255, 255, 255, 0) 90deg 180deg,
+		var(--color2) 180deg 270deg,
+		rgba(255, 255, 255, 0) 270deg 360deg
+	),
+	repeating-linear-gradient(
+		315deg,
+		var(--color1) 0% 12.5%,
+		var(--color2) 12.5% 25%,
+		var(--color1) 25% 37.5%,
+		var(--color2) 37.5% 62.5%,
+		var(--color1) 62.5% 75%,
+		var(--color2) 75% 87.5%,
+		var(--color1) 87.5% 100%
+	);
+}
+.widgets {
+	margin: 5px;
+	padding: 5px;
+	font-size: 120%;
+}
+#TableArea{
+	width: auto;
+}
+table {
+	width: auto;
+}
+td {
+	padding: 5px;
+	vertical-align: top; 
+}
+tr:nth-child(even) {
+	background: #bde8f6;
+}
+tr:nth-child(odd) {
+	background: #e0ffff;
+}
+@media screen and (max-width: 400px) {
+	.widgets {
+		font-size: 150%;
+	}
+}

@@ -1,0 +1,225 @@
+html, body {
+	margin:0;
+	padding:0;
+	width:100%;
+	height:100%;
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family:"Lucida Grande","Lucida Sans Unicode","DejaVu Sans",Lucida,Arial,Helvetica,sans-serif;
+	height: 100%;
+}
+
+#WholeBody{
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+}
+
+#LeftHalf{
+	vertical-align: top;
+	width: 70%;
+	display: table-cell;
+}
+
+#RightHalf{
+	display: table-cell;
+	margin-right: auto;
+	width: 280px;
+	height: 100%;
+}
+
+header{
+	position: sticky;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
+
+a:hover{
+	color: red;
+}
+
+input[type="file"] {
+	display: none;
+}
+
+.FileInput{
+	border: 2px solid #00f;
+	display: inline-block;
+	background-color: #ccc;
+	padding: 5px 6px 5px 5px;
+	color: #000;
+	cursor: pointer;
+	margin: 5px;
+}
+
+figure {
+	max-width: 640px;
+	width: 100%;
+	height: auto;
+	margin: 0 auto 0 5px;
+	padding: 5px 0 0 0;
+}
+
+figcaption {
+	padding: 5px;
+	display:block;
+	font-size:12px;
+	color:#fff;
+}
+
+video {
+	width:100%;
+}
+
+/* controls */
+.Controls > * {
+	float:left;
+	height:100%;
+	height: 20px;
+	margin-left:0.1953125%;
+	display:block;
+}
+
+.Controls {
+	cursor:pointer;
+	width:99%;
+}
+
+.Progress {
+	width: 100%;
+}
+
+.Controls Progress {
+	display:block;
+	width:100%;
+	height:81%;
+	margin-top:2px;
+	margin-top:0.125rem;
+	border:none;
+	overflow:hidden;
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	color:#0095dd;
+}
+
+#PlayControls{
+	margin: 0 0 0 5px;
+}
+
+.Buttons{
+	margin: 1px;
+	width: 10%;
+	display: inline-block;
+	padding: 5px;
+	text-decoration: none;
+	border-radius: 3px;
+	-webkit-appearance: none;
+}
+
+.Buttons:active  {
+	-webkit-transform: translateY(2px);
+	transform: translateY(2px);
+	box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);
+	border-bottom: none;
+}
+
+.Buttons:hover{
+	filter:brightness(1.2);
+	cursor: pointer;
+}
+
+.Buttons:disabled  {
+	color: dimGrey;
+	box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.2);
+	border-bottom: none;
+	filter:brightness(1.0);
+	cursor: not-allowed;
+}
+
+.noMovingButton{
+	vertical-align: top;
+	margin: 1px;
+	min-width: 100px;
+	width: 10%;
+	display: inline-block;
+	padding: 5px;
+	text-decoration: none;
+	border-radius: 3px;
+  -webkit-appearance: none;
+}
+
+.noMovingButton:hover{
+	filter:brightness(1.2);
+	cursor: pointer;
+}
+
+.noMovingButton:disabled  {
+	color: dimGrey;
+	box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.2);
+	border-bottom: none;
+	filter:brightness(1.0);
+	cursor: not-allowed;
+}
+
+#PressPlay{
+	background: #668ad8;
+	color: #fff;
+	width: 40%;
+	height: 3em;
+}
+
+#PressPlay:active{
+	background: red;
+}
+
+#PressPlay:disabled{
+	background: #668ad8;
+}
+
+#PlayPause{
+	background: #339270;
+	color: #fff;
+	width: 40%;
+	height: 3em;
+}
+
+.OpButton{
+	height: 30px;
+	width: 15%;
+	text-align: center;
+}
+
+#ScriptDiv{
+	width: 100%;
+	margin: 0 5px 0 6px;
+	padding: 0 5px 0 0;
+}
+
+#TextArea{
+	width: 100%;
+	height: 100vh;
+	margin: 1px 5px 0 0;
+	padding: 3px;
+	resize: none;
+	font-family: Times New Roman;
+	font-size: 14pt;
+	background-color: white;
+	overflow: auto;
+	scroll-behavior: smooth;
+}
+
+.A{
+	color: black;
+}
+
+#Selector{
+	color: white;
+	cursor: pointer;
+	width: 60%;
+	align-right: auto;
+}

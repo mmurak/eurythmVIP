@@ -1,0 +1,136 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Subtitles Extractor</title>
+		<link rel="shortcut icon" href="./CyanKiwiBird.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<style>
+			body{
+				margin: 0;
+				padding: 0;
+			}
+			.full{
+				--color1: #ffffff;
+				--color2: #e6e6fa;
+				position: relative;
+				margin: 10px;
+				width: 100%;
+				height: 100vh;
+				background-size: 10px 10px;
+				background-repeat: repeat;
+				background-image: conic-gradient(
+					var(--color1) 0deg 90deg,
+					rgba(255, 255, 255, 0) 90deg 180deg,
+					var(--color2) 180deg 270deg,
+					rgba(255, 255, 255, 0) 270deg 360deg
+				),
+				repeating-linear-gradient(
+					315deg,
+					var(--color1) 0% 12.5%,
+					var(--color2) 12.5% 25%,
+					var(--color1) 25% 37.5%,
+					var(--color2) 37.5% 62.5%,
+					var(--color1) 62.5% 75%,
+					var(--color2) 75% 87.5%,
+					var(--color1) 87.5% 100%
+				);
+			}
+			.widgets {
+				margin: 5px;
+				padding: 5px;
+				font-size: 120%;
+			}
+			#scriptsDiv{
+				width: 100%;
+			}
+			#scriptsArea{
+				height: 20em;
+				font-family: "Times New Roman";
+			}
+			@media screen and (max-width: 400px) {
+				.widgets {
+					font-size: 150%;
+				}
+			}
+		</style>
+		<script src="./resources/mp4box.all.min.js"></script>
+	</head>
+	<body class="full">
+		<h2>MP4 (tx3g) subtitles to SRT converter.  (Powered by MP4Box.js)</h2>
+		<input type="file" class="widgets">
+		<div id="buttonArea" class="widgets"></div>
+		<div id="scriptsDiv">
+			<textarea  id="scriptsArea" class="widgets"cols="80" rows="30"></textarea>
+		</div>
+		<script src="./resources/ISO639.js"></script>
+		<script src="./resources/mp4subtitles.js"></script>
+		<script>
+class ButtonArea {
+	constructor() {
+		this.buttonArea = document.getElementById("buttonArea");
+		this.scriptsArea = document.getElementById("scriptsArea");
+		this.file;
+	}
+}
+
+let B = new ButtonArea();
+
+document.querySelector('input[type="file"]').onchange = function(e) {
+	B.file = this.files[0];
+	if (B.file == null) return;
+	mp4subtitles.load(B.file, readyCallback);
+	while(B.buttonArea.firstChild) {
+		B.buttonArea.removeChild(B.buttonArea.lastChild);
+	}
+	B.scriptsArea.value = "";
+}
+
+function readyCallback() {
+	let languages = mp4subtitles.getAvailableLanguage();
+	for (let fn of languages) {
+		let btn = document.createElement("input");
+		btn.type = "button";
+		btn.className = "widgets";
+		btn.value = fn;
+		btn.onclick = () => {
+			writeButtonClicked(fn);
+		};
+		B.buttonArea.appendChild(btn);
+	}
+}
+
+function writeButtonClicked(languageName) {
+	let scriptsArray = mp4subtitles.getScriptsArray(languageName, showInSRT);
+}
+
+function showInSRT(scriptsArray) {
+	let sheet = "";
+	let no = 1;
+	for(let s of scriptsArray) {
+		sheet += no + "\n" + getTime(s[0], ",") + " --> " + getTime(s[1], ",") + "\n" + s[2] + "\n\n";
+		no++;
+	}
+	B.scriptsArea.value = sheet;
+	saveScript(sheet);
+}
+
+function getTime(currentTime, delim) {
+    let ct = Math.floor(currentTime / 1000);
+    let hour = Math.floor(ct / 3600000);
+    let minute = Math.floor(ct % 3600000 / 60000);
+    let sec = Math.floor(ct % 60000 / 1000);
+    let csec = Math.floor(ct % 1000);
+    return ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2) + ":" + ("00" + sec).slice(-2) + delim + ("000" + csec).slice(-3);
+}
+
+function saveScript(text) {
+	let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+	let blob = new Blob([ bom,  text ], { "type" : "text/plain" });
+	const a = document.createElement("a");
+	a.href = window.URL.createObjectURL(blob);
+	a.download = B.file.name + "-script.srt";
+	a.click();
+}
+		</script>
+	</body>
+<html>
