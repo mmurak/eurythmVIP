@@ -23,6 +23,8 @@ class GlobalManager {
 		this.leftArrowButton = document.getElementById("LeftArrowButton");
 		this.rightArrowButton = document.getElementById("RightArrowButton");
 		this.jumpSelector = document.getElementById("JumpSelector");
+		this.langSelector = document.getElementById("LangSelector");
+		this.timeDisplay = document.getElementById("TimeDisplay");
 
 		this.frameWidth = "640";
 		this.interactiveArray = [];
@@ -95,46 +97,39 @@ G.mediaFile.addEventListener("change", (evt) => {
 			G.selector.value = 1.0;
 			G.selector.dispatchEvent(new Event("input"));
 			G.speedResetButton.value = G.defaultSpeedLabel;
+			G.timeDisplay.innerHTML = "00:00:00";
 	}
 }, false);
 
 // Invoked when PressPlay button is pressed down
-G.pressPlay.addEventListener("mousedown", (evt) => {
+G.pressPlay.addEventListener("mousedown", (evt) => { _processPressPlayStart(evt); });
+G.pressPlay.addEventListener("touchstart", (evt) => { _processPressPlayStart(evt); });
+function _processPressPlayStart(evt) {
+	if (G.videoElement.src == "") return;
 	G.isPressHold = true;
 	resetPlayPause();
 	G.videoElement.currentTime = G.startPoint;
 	G.videoElement.play();
 	evt.preventDefault();
-});
-G.pressPlay.addEventListener("touchstart", (evt) => {
-	G.isPressHold = true;
-	resetPlayPause();
-	G.videoElement.currentTime = G.startPoint;
-	G.videoElement.play();
-	evt.preventDefault();
-});
+}
 
 // Invoked when PressPlay button is released
-G.pressPlay.addEventListener("mouseup", (evt) => {
+G.pressPlay.addEventListener("mouseup", (evt) => { _processPressPlayEnd(evt); });
+G.pressPlay.addEventListener("touchend", (evt) => {_processPressPlayEnd(evt); });
+function _processPressPlayEnd(evt) {
+	if ((G.isPressHold == false) || (G.videoElement.src == ""))  return;
 	G.isPressHold = false;
 	G.videoElement.pause();
 	evt.preventDefault();
-});
-G.pressPlay.addEventListener("touchend", (evt) => {
-	G.isPressHold = false;
-	G.videoElement.pause();
-	evt.preventDefault();
-});
+}
 
 // Invoked when the Transcript area is clicked
-G.textArea.addEventListener("click", (evt) =>{
+G.textArea.addEventListener("click", (evt) =>{ _processTap(evt); });
+G.textArea.addEventListener("touchstart", (evt) =>{_processTap(evt); });
+function _processTap(evt) {
 	register();
 	evt.preventDefault();
-});
-G.textArea.addEventListener("touchstart", (evt) =>{
-	register();
-//	evt.preventDefault();
-});
+}
 
 // Invoked when a media file is loaded
 G.videoElement.addEventListener('loadedmetadata', () => {
@@ -158,13 +153,16 @@ G.videoElement.addEventListener('pause', () => {
 }, false);
 
 // Invoked when the PlayPause button is clicked
-G.playPause.addEventListener('click', (e) => {
+G.playPause.addEventListener('click', (e) => { _processPlayPause(e); });
+function _processPlayPause(e) {
 	if (G.videoElement.paused || G.videoElement.ended) {
 		G.videoElement.play();
 	} else {
 		G.videoElement.pause();
 	}
-});
+}
+// Invoked when the Video screen is clicked
+G.videoElement.addEventListener('click', (e) => { _processPlayPause(e); });
 
 // Invoked while playing the media
 G.videoElement.addEventListener('timeupdate', () => {
@@ -173,6 +171,7 @@ G.videoElement.addEventListener('timeupdate', () => {
 		G.progress.setAttribute('max', G.videoElement.duration);
 	}
 	G.progress.value = G.videoElement.currentTime;
+	G.timeDisplay.innerHTML = getTime(G.videoElement.currentTime).substring(0, 8);
 	G.progressBar.style.width = Math.floor((G.videoElement.currentTime / G.videoElement.duration) * 100) + '%';
 	interactiveSubtitles();
 });
@@ -225,6 +224,39 @@ function _speedReset() {
 	G.selector.dispatchEvent(new Event("input"));
 }
 
+document.addEventListener("keydown", (evt) => {
+	if (evt.key == " ") {
+		_processPlayPause(evt)
+	} else if (evt.metaKey) {
+		_processPressPlayStart(evt);
+	} else if (evt.key == "ArrowLeft") {
+		_processLeftArrow(evt);
+	} else if (evt.key == "ArrowRight") {
+		_processRightArrow(evt);
+	} else if ((evt.key >= "1") && (evt.key <= "9")) {
+		let delta = (evt.ctrlKey) ? Number(evt.key) : -Number(evt.key);
+		G.videoElement.currentTime = G.videoElement.currentTime + delta;
+	} else if (evt.key == "ArrowUp") {
+		G.selector.value = Number(G.selector.value) + 0.05;
+		speedChange(G.selector);
+	} else if (evt.key == "ArrowDown") {
+		G.selector.value = Number(G.selector.value) - 0.05;
+		speedChange(G.selector);
+	} else if ((evt.key == "d") || (evt.key == "D")) {
+		_speedReset(evt);
+	}
+	evt.preventDefault();
+});
+document.addEventListener("keyup", (evt) => {
+	if (G.isPressHold) {
+		_processPressPlayEnd(evt);
+	}
+});
+
+G.langSelector.addEventListener("change", (evt) => {
+	const lang = G.langSelector[G.langSelector.selectedIndex].value;
+	mp4subtitles.getScriptsArray(lang, scriptsReady);
+});
 
 /*
  * Functions
@@ -235,6 +267,13 @@ function readyCallback() {
 	let langList = mp4subtitles.getAvailableLanguage();
 	if (langList.includes("English")) {
 		mp4subtitles.getScriptsArray("English", scriptsReady);
+	}
+	G.langSelector.innerHTML = "";
+	for (const lang of langList) {
+		const opt = document.createElement("option");
+		opt.value = lang;
+		opt.innerHTML = lang;
+		G.langSelector.appendChild(opt);
 	}
 }
 
@@ -300,7 +339,6 @@ function convertTxtScript(text) {
 function register() {
 	const idCandidate = window.getSelection().baseNode.parentNode.id;
 	if (idCandidate == "TextArea")  return;
-console.log(idCandidate);
 	const sPoint = G.interactiveArray[Number(idCandidate.substring(1))-1] + 0.1;
 	G.videoElement.currentTime = sPoint;
 	G.startPoint = sPoint;
