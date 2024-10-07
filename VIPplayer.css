@@ -20,7 +20,7 @@ body {
 
 #LeftHalf{
 	vertical-align: top;
-	width: 70%;
+	width: 45%;
 	max-width: 640px;
 	display: table-cell;
 }
@@ -209,7 +209,7 @@ video {
 	padding: 3px;
 	resize: none;
 	font-family: Times New Roman;
-	font-size: 14pt;
+	font-size: 29pt;
 	background-color: white;
 	overflow: auto;
 	scroll-behavior: smooth;

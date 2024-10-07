@@ -1,8 +1,8 @@
 class ParameterManager {
 	constructor() {
 		this.database = {
-			"vratio": "70",
-			"tsize": "14",
+			"vratio": "45",
+			"tsize": "29",
 		};
 		const argLine = location.search.substring(1);
 		if (argLine != "") {
