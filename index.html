@@ -1,6 +1,6 @@
 <html>
 	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Eurythm VIP ver. 0.3</title>
+		<title>Eurythm VIP ver. 1.00</title>
         <link rel="shortcut icon" href="./kiwi-bird.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="stylesheet" href="./VIPplayer.css">
@@ -8,13 +8,18 @@
 	<body>
 		<header id="HeaderSection">
 			<div class="FileSection">
-				<label for="MediaFile" class="FileInput">
-					Open Video/Script file
-				</label>
-				<input type="file" id="MediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.txt,.srt" />
+				<div style="display: flex;">
+					<label class="FileInput">
+						Open Video/Script file
+						<input type="file" id="MediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.txt,.srt" />
+					</label>
+					<div style="margin: 0 5 0 auto;font-style: italic;">
+					<a href="./docs/help.html" target="_blank">Eurythm VIP</a> ver. 1.00
+					</div>
+				</div>
 				<div style="margin: 0 0 0 5px;">
-					<label for="VideoFilename">Video File: </label><span id="VideoFilename"></span><br>
-					<label for="ScriptFilename">Transcript File: </label><span id="ScriptFilename"></span>
+					<label>Video File: <span id="VideoFilename"></span></label><br>
+					<label>Transcript File: <span id="ScriptFilename"></span></label>
 					<select id="LangSelector" style="margin: 10px;"></select>
 					<label id="TimeDisplay">00:00:00</label>
 				</div>
@@ -24,7 +29,7 @@
 			<div id="LeftHalf">
 				<figure id="VideoContainer" data-fullscreen="false">
 					<div style="display: flex">
-						<video id="VideoElement" preload="metadata" poster="" playsinline width="640">
+						<video id="VideoPlayer" preload="metadata" poster="" playsinline width="640">
 							<source src="">
 						</video>
 					</div>
@@ -35,9 +40,8 @@
 							</progress>
 						</div>
 					</div>
-					<label for="SpeedMeter">Speed: </label>
-					<span id="SpeedMeter">1.00</span>
-					<input id="Selector" min="0.2" max="2.0" step="0.01" value="1.0"  type="range" list="SpeedList"></input>
+					<label>Speed: <span id="SpeedMeter">1.00</span></label>
+					<input id="SpeedController" min="0.2" max="2.0" step="0.01" value="1.0"  type="range" list="SpeedList"></input>
 					<input type="button" id="SpeedResetButton" value="1x Speed"></input>
 					<figcaption>
 					<div style="display: flex;">
@@ -61,7 +65,7 @@
 			<div id="RightHalf">
 				<div id="PlayControls">
 					<input type="button" id="PlayPause" class="noMovingButton" disabled value="Tap to Play"></input>
-					<input type="button" id="PressPlay" class="noMovingButton" disabled value="Press Play"></input>
+					<input type="button" id="PressPlay" class="noMovingButton" disabled value="Press to Play"></input>
 				</div>
 				<div id="ScriptDiv">
 					<div id="TextArea" contenteditable="false">
@@ -70,7 +74,7 @@
 			</div>
 		</div>
 		<footer id="FooterSection">
-			<div style="text-align: right">Powered by MP4Box.js</div>
+			<div style="margin-right: 5; text-align: right">Powered by <a href="https://github.com/gpac/mp4box.js" target="_blank">MP4Box.js</a></div>
 		</footer>
 
 		<script src="./resources/mp4box.all.min.js"></script>
