@@ -3,6 +3,7 @@ class ParameterManager {
 		this.database = {
 			"vratio": "45",
 			"tsize": "29",
+			"pause": "0.2",
 		};
 		const argLine = location.search.substring(1);
 		if (argLine != "") {
@@ -301,6 +302,8 @@ document.addEventListener("keydown", (evt) => {
 		changeLRbalance();
 	} else if ((evt.key == "t") || (evt.key == "T")) {
 		changeFontSize();
+	} else if (evt.key == "#") {
+		changePause();
 	}
 	evt.preventDefault();
 });
@@ -360,15 +363,25 @@ function srt2internalExp(text) {
 	let result = "";
 	G.lineNo = 1;
 	G.interactiveArray = [];
+	let lastEndTime = 0;
+	let preBreak = "";
+	const pause = Number(G.parameterMgr.get("pause"));
 	for (let i = 0; i < clusters.length; i++) {
-		// [1]:No [2]:StartTime [3]:Text
-		let m = clusters[i].match(/^(\d+)\n(\d\d:\d\d:\d\d,\d\d\d) --> \d\d:\d\d:\d\d,\d\d\d\n((.|\n|\r\n)*)$/);
+		// [1]:No [2]:StartTime [3]:EndTime [4]:Text
+		let m = clusters[i].match(/^(\d+)\n(\d\d:\d\d:\d\d,\d\d\d) --> (\d\d:\d\d:\d\d,\d\d\d)\n((.|\n|\r\n)*)$/);
 		if (m != null) {
-			let savedTime =  m[2].replace(",", ".");
-			let val = m[3].trim();		//		.replaceAll(/(\n|\r\n)/g, " ");
+			let currentStartTime =  stringTimeToSec(m[2].replace(",", "."));
+
+			if ((currentStartTime - lastEndTime) > pause) {
+				result += preBreak + "<span style='color: blue;'>" + m[2].substr(0, 8) + "</span><br>\n";
+				preBreak = "<br><br>";
+			}
+			lastEndTime = stringTimeToSec(m[3].replace(",", "."));
+
+			let val = m[4].trim();		//		.replaceAll(/(\n|\r\n)/g, " ");
 			result += "<a name='" + G.lineNo + "' id='L" + G.lineNo + "' class='A'>" + val + "</a>\n";
 			G.lineNo++;
-			G.interactiveArray.push(stringTimeToSec(savedTime) - 0.1);	// 0.1 for lag
+			G.interactiveArray.push(currentStartTime) - 0.1;	// 0.1 for lag
 		}
 	}
 	return result;
@@ -396,7 +409,7 @@ function convertTxtScript(text) {
 // Invoked when the Transcript area is clicked
 function moveFocalPoint() {
 	const idCandidate = window.getSelection().anchorNode.parentNode.id;
-	if (idCandidate == "TextArea")  return;		// One of the gaps are clicked
+	if ((idCandidate == "TextArea") || (idCandidate == "ScriptDiv") || (idCandidate == ""))  return;		// One of the gaps are clicked
 	const sPoint = G.interactiveArray[Number(idCandidate.substring(1))-1] + 0.1;
 	G.videoPlayer.currentTime = sPoint;
 	G.startTime = sPoint;
@@ -518,28 +531,6 @@ function setBackgroundColor(at, color) {
 	document.getElementById("L" + at).style = "background-color:" + color;
 }
 
-/*
-function findLine() {
-	const target = G.videoPlayer.currentTime;
-console.log("target:" + target);
-	let lowerB = 0;
-	let upperB = G.interactiveArray.length - 2;
-	while (lowerB <= upperB) {
-		let checkP = Math.floor((lowerB + upperB) / 2);
-		if (target >= G.interactiveArray[checkP]) {
-			if (target < G.interactiveArray[checkP+1]) {
-alert("Found at:" + checkP);
-				return checkP;		// hit!
-			}
-			lowerB = checkP + 1;
-		} else {
-			upperB = checkP - 1;
-		}
-	}
-alert("What?");
-}
-*/
-
 function findLine() {
 	let i = G.interactiveArray.length - 1;
 	while((i >= 0) && (G.videoPlayer.currentTime < G.interactiveArray[i])) {
@@ -567,8 +558,19 @@ function changeFontSize() {
 	}
 }
 function fixFontSize(num) {
-console.log(num);
 	G.textArea.style.fontSize =  num + "pt";
 	G.parameterMgr.set("tsize", num);
 	resize();
+}
+
+function changePause() {
+	let inp = prompt("Enter pause in seconds", G.parameterMgr.get("pause"));
+	if (inp.match(/^-?\d*\.?\d*$/)) {
+		fixPause(inp);
+	}
+}
+function fixPause(num) {
+	G.parameterMgr.set("pause", num);
+	const lang = G.langSelector[G.langSelector.selectedIndex].value;
+	mp4subtitles.getScriptsArray(lang, scriptsReady);
 }
