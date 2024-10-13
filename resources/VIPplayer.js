@@ -74,6 +74,9 @@ class GlobalManager {
 		this.speedStorage = 1.0;
 		this.defaultSpeedLabel = "1x Speed";
 
+		this.fontSize = document.getElementById("FontSize");
+		this.paraSize = document.getElementById("ParaSize");
+
 		this.parameterMgr = new ParameterManager();
 	}
 }
@@ -287,7 +290,7 @@ document.addEventListener("keydown", (evt) => {
 		_processLeftArrow(evt);
 	} else if (evt.key == "ArrowRight") {
 		_processRightArrow(evt);
-	} else if ((evt.key >= "1") && (evt.key <= "9")) {
+	} else if ((document.activeElement != G.fontSize) && (evt.key >= "1") && (evt.key <= "9")) {
 		let delta = (evt.ctrlKey) ? Number(evt.key) : -Number(evt.key);
 		G.videoPlayer.currentTime = G.videoPlayer.currentTime + delta;
 	} else if (evt.key == "ArrowUp") {
@@ -300,12 +303,8 @@ document.addEventListener("keydown", (evt) => {
 		_speedReset(evt);
 	} else if ((evt.key == "v") || (evt.key == "V")) {
 		changeLRbalance();
-	} else if ((evt.key == "t") || (evt.key == "T")) {
-		changeFontSize();
-	} else if (evt.key == "#") {
-		changePause();
 	}
-	evt.preventDefault();
+//	evt.preventDefault();
 });
 document.addEventListener("keyup", (evt) => {
 	if (G.isPressHold) {
@@ -316,6 +315,21 @@ document.addEventListener("keyup", (evt) => {
 G.langSelector.addEventListener("change", (evt) => {
 	const lang = G.langSelector[G.langSelector.selectedIndex].value;
 	mp4subtitles.getScriptsArray(lang, scriptsReady);
+});
+
+G.fontSize.addEventListener("focus", (evt) => {
+	G.fontSize.value = "";
+});
+
+G.fontSize.addEventListener("change", (evt) => {
+	fixFontSize(G.fontSize.value);
+	evt.stopPropagation();
+	evt.preventDefault();
+	G.fontSize.blur();
+});
+
+G.paraSize.addEventListener("input", (evt) => {
+	fixPause(G.paraSize.value);
 });
 
 /*
@@ -457,6 +471,7 @@ function resize() {
 		G.footerSection.getBoundingClientRect().height - 60) + "px;";
 	fixLRbalance(G.parameterMgr.get("vratio"));
 	G.textArea.style.fontSize = G.parameterMgr.get("tsize") + "pt";
+	G.fontSize.value = G.parameterMgr.get("tsize");
 }
 
 
@@ -551,26 +566,16 @@ function fixLRbalance(num) {
 	G.parameterMgr.set("vratio", num);
 }
 
-function changeFontSize() {
-	let inp = prompt("Enter font-size (pt)", G.parameterMgr.get("tsize"));
-	if (inp.match(/^\d+$/)) {
-		fixFontSize(inp);
-	}
-}
 function fixFontSize(num) {
 	G.textArea.style.fontSize =  num + "pt";
 	G.parameterMgr.set("tsize", num);
 	resize();
 }
 
-function changePause() {
-	let inp = prompt("Enter pause in seconds", G.parameterMgr.get("pause"));
-	if (inp.match(/^-?\d*\.?\d*$/)) {
-		fixPause(inp);
-	}
-}
 function fixPause(num) {
 	G.parameterMgr.set("pause", num);
-	const lang = G.langSelector[G.langSelector.selectedIndex].value;
+	const item = G.langSelector[G.langSelector.selectedIndex];
+	if (item == null) return;
+	const lang = item.value;
 	mp4subtitles.getScriptsArray(lang, scriptsReady);
 }

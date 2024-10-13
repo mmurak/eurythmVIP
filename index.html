@@ -1,6 +1,6 @@
 <html>
 	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Eurythm VIP ver. 1.02</title>
+		<title>Eurythm VIP ver. 1.10</title>
         <link rel="shortcut icon" href="./kiwi-bird.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="stylesheet" href="./VIPplayer.css">
@@ -14,7 +14,7 @@
 						<input type="file" id="MediaFile" accept=".mp3,.webm,.mp4,.mkv,.wav,.txt,.srt" />
 					</label>
 					<div style="margin: 0 5 0 auto;font-style: italic;">
-					<a href="./docs/help.html" target="_blank">Eurythm VIP</a> ver. 1.02
+					<a href="./docs/help.html" target="_blank">Eurythm VIP</a> ver. 1.10
 					</div>
 				</div>
 				<div style="margin: 0 0 0 5px;">
@@ -60,6 +60,25 @@
 						</select>
 						<input type="button" id="RightArrowButton" class="OpButton" value="&#x25B6;(FF)" />
 					</figcaption>
+					<br>
+					<label>Font size:
+					<input list="fontsize" id="FontSize" value="20"/></label>
+					<datalist id="fontsize">
+						<option value="14">
+						<option value="16">
+						<option value="18">
+						<option value="20">
+						<option value="22">
+						<option value="24">
+						<option value="26">
+						<option value="28">
+					</datalist>
+
+					<div id="ParaField">
+						<div id="ParaLabel" >ParaSize: </div>
+						<input id="ParaSize" style="width: auto;" min="-0.1" max="1.0" step="0.1" value="0.2"  type="range"></input>
+					</div>
+
 				</figure>
 			</div>
 			<div id="RightHalf">

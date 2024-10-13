@@ -226,3 +226,17 @@ video {
 	width: 60%;
 	align-right: auto;
 }
+
+#ParaField{
+	display: flex;
+}
+#ParaLabel{
+	flex: 0;
+}
+#ParaSize{
+	flex: 2;
+}
+
+#FontSize{
+	width: 60px;
+}
