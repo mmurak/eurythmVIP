@@ -373,7 +373,7 @@ function scriptsReady(scriptsArray) {
 
 // Convert SRT to the app's internal representation
 function srt2internalExp(text) {
-	let clusters = text.split(/\n\n/);
+	let clusters = text.replaceAll("\r", "").split(/\n\n/);
 	let result = "";
 	G.lineNo = 1;
 	G.interactiveArray = [];
