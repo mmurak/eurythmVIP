@@ -390,16 +390,16 @@ function vtt2srt(data) {
 			continue;
 		}
 		
-		const timeCode = line.match(/(\d{2}:\d{2}:\d{2}\.\d{3})\s+\-\-\>\s+(\d{2}:\d{2}:\d{2}\.\d{3}).*/);
+		const timeCode = line.match(/((\d{2}:)?\d{2}:\d{2}\.\d{3})\s+\-\-\>\s+((\d{2}:)?\d{2}:\d{2}\.\d{3}).*/);
 		if (timeCode) {
 			const startTime = timeCode[1];
-			const endTime = timeCode[2];
-			const srtStartTime = startTime.replace(".", ",");
-			const srtEndTime = endTime.replace(".", ",");
+			const endTime = timeCode[3];
+			const srtStartTime = getTime(stringTimeToSec(startTime)).replace(".", ",");
+			const srtEndTime = getTime(stringTimeToSec(endTime)).replace(".", ",");
 			let textLines = [];
 			for (let j = i + 1; j <vttLines.length; j++) {
 				const textLine = vttLines[j];
-				if (textLine.trim() === "" || textLine.match(/(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})/)) {
+				if (textLine.trim() === "" || textLine.match(/((\d{2}:)?\d{2}:\d{2}\.\d{3}) --> ((\d{2}:)?\d{2}:\d{2}\.\d{3})/)) {
 					break;
 				}
 				textLines.push(textLine);
@@ -411,6 +411,7 @@ function vtt2srt(data) {
 			i += textLines.length;
 		}
 	}
+//	console.log(srtText);
 	return srtText;
 }
 
