@@ -166,6 +166,14 @@ G.mediaFile.addEventListener("change", (evt) => {
 				G.textArea.innerHTML = srt2internalExp(srtReader.result);
 			}
 			break;
+		case "vtt" :
+			G.scriptFilename.innerHTML = file.name;
+			let vttReader = new FileReader();
+			vttReader.readAsText(file);
+			vttReader.onload = function () {
+				G.textArea.innerHTML = srt2internalExp(vtt2srt(vttReader.result));
+			}
+			break;
 		default:
 			G.videoFilename.innerHTML = file.name;
 			if (G.analyse) {
@@ -369,6 +377,41 @@ function scriptsReady(scriptsArray) {
 	} else {
 		G.scriptFilename.innerHTML = "(Inside the video file.)";
 	}
+}
+
+// Convert VTT to SRT representation
+function vtt2srt(data) {
+	const vttLines = data.split(/\r\n|\n|\r/);
+	let srtText = "";
+	let counter = 1;
+	for (let i = 0; i < vttLines.length; i++) {
+		const line = vttLines[i];
+		if (line.trim() === "" || line.startsWith("WEBVTT") || line.startsWith("Kind: ") || line.startsWith("Language: ")) {
+			continue;
+		}
+		
+		const timeCode = line.match(/(\d{2}:\d{2}:\d{2}\.\d{3})\s+\-\-\>\s+(\d{2}:\d{2}:\d{2}\.\d{3}).*/);
+		if (timeCode) {
+			const startTime = timeCode[1];
+			const endTime = timeCode[2];
+			const srtStartTime = startTime.replace(".", ",");
+			const srtEndTime = endTime.replace(".", ",");
+			let textLines = [];
+			for (let j = i + 1; j <vttLines.length; j++) {
+				const textLine = vttLines[j];
+				if (textLine.trim() === "" || textLine.match(/(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})/)) {
+					break;
+				}
+				textLines.push(textLine);
+			}
+			srtText += counter + "\n";
+			srtText += srtStartTime + " --> " + srtEndTime + "\n";
+			srtText += textLines.join("\n") + "\n\n";
+			counter++;
+			i += textLines.length;
+		}
+	}
+	return srtText;
 }
 
 // Convert SRT to the app's internal representation
